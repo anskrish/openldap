@@ -1,0 +1,40 @@
+---
+- name: Configure sladp server
+  debconf: name=slapd question={{ item.question }} value={{ item.value }} vtype={{ item.vtype }}
+  with_items:
+    - { question: 'slapd/internal/generated_adminpw',   value: '{{admin_paaswd}}', vtype: 'password' }
+    - { question: 'slapd/internal/adminpw', value: '{{admin_paaswd}}', vtype: 'password' }
+    - { question: 'slapd/password1', value: '{{admin_paaswd}}', vtype: 'password' }
+    - { question: 'slapd/password2', value: '{{admin_paaswd}}', vtype: 'password' }
+    - { question: 'slapd/domain', value: '{{dc1_name}}.{{dc2_name}}', vtype: 'string' }
+    - { question: 'shared/organization', value: '{{org_name}}', vtype: 'string' }
+    - { question: 'slapd/backend', value: 'HDB', vtype: 'select' }
+    - { question: 'slapd/purge_database', value: 'no', vtype: 'boolean' }
+    - { question: 'slapd/move_old_database', value: 'yes', vtype: 'boolean' }
+    - { question: 'slapd/allow_ldap_v2', value: 'no', vtype: 'boolean' }
+
+- name: Install OpenLDAP Packages
+  apt: name={{ item }} state=present update_cache=yes
+  with_items:
+    - slapd
+    - ldap-utils
+    - openssl
+    - curl
+    - phpldapadmin
+- name: Updating ldap conf
+  template: src=templates/ldap.j2 dest=/etc/ldap/ldap.conf mode=644
+
+- name: Install phpmyadmin
+  apt: name={{ item }} state=present
+  with_items:
+    - apache2
+    - php5
+    - php5-mysql
+    - phpldapadmin
+- name: Update the phpconfig file
+  template: src=templates/phpconfi.j2 dest=/etc/phpldapadmin/config.php mode=640
+- name: restart apache and sladp
+  service: name={{ item }} state=restarted
+  with_items:
+    - slapd
+    - apache2

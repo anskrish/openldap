@@ -1,0 +1,3 @@
+---
+dependencies:
+   - { role: utility/install, packages: "{{ debconf }}", desc: debconf, update_cache: yes }

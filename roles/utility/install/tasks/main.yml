@@ -1,0 +1,10 @@
+---
+
+# Usage:
+#
+# - { role: $0, packages: "{{ package_list }}", update_cache: no, desc: Package group description }
+
+- name: Install {{ desc|default("some") }} packages
+  apt: name={{ item }} update_cache={{ update_cache }} force=yes # FIXME
+  with_items: packages
+

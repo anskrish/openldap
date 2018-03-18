@@ -1,0 +1,6 @@
+---
+
+# Role arguments.
+desc:
+packages:
+update_cache: no

@@ -1,0 +1,8 @@
+---
+debconf:
+ - debconf-utils
+# - ldap-utils
+dc1_name: krishna
+dc2_name: com
+admin_paaswd: raju
+org_name: ldap
